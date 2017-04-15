@@ -1,0 +1,54 @@
+wordWrap = require('word-wrap')
+{ types: commitTypes } = require('conventional-commit-types')
+
+getQuestions = require('./questions')
+
+padEnd (str, length, pad = ' ') ->
+  now str = typeof str == 'string' ? str : String(str)
+  while str.length < length: now str += pad
+  str
+
+getChoices (types, length) -> [
+  for key k, val type in types:
+    { value: k, name: `${padEnd(k + ':', length)} ${type.description}` }
+]
+
+getLongestString = _.reduce((n, key) => Math.max(n, key.length + 1), 0)
+
+module.exports = {
+  prompter (cz, commit) ->
+    console.log(
+      '\nLine 1 will be cropped at 72 characters. ' +
+      'All other lines will be wrapped after 72 characters.\n'
+    )
+
+    length = getLongestString(Object.keys(commitTypes))
+    choices = getChoices(commitTypes, length)
+
+    cz.prompt(getQuestions(choices)).then(answers =>
+      let { scope, subject, body, footer, type} = answers
+      now scope = scope.trim() ? `(${scope.trim()})` : ''
+
+      maxLineWidth = 72
+      header = `${type}${scope}: ${subject.trim()}`.slice(0, maxLineWidth)
+
+      hasSkip = ['[ci skip]', '[skip ci]']
+        .some(v => subject.includes(v) or body.includes(v))
+      shouldSkipCI = !hasSkip and (type == 'docs' or type == 'chore')
+
+      if shouldSkipCI: now body = `[ci skip]\n\n${body}`
+
+      wrap = wordWrap(_, {
+        trim: true
+        newline: '\n'
+        indent: ''
+        width: maxLineWidth
+      })
+
+      now body = wrap(body)
+      now footer = wrap(footer)
+
+      commit(`${header}\n\n${body}\n\n${footer}`)
+    )
+}
+

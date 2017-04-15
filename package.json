@@ -1,33 +1,72 @@
 {
-  "name": "cz-conventional-changelog",
-  "version": "0.0.0-semantically-released.0",
-  "description": "Commitizen adapter following the conventional-changelog format.",
-  "main": "index.js",
-  "scripts": {
-    "commit": "git-cz",
-    "test": "echo 'Tests need to be setup!'",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  "name": "@citycide/cz-conventional",
+  "version": "1.0.0",
+  "description": "Personalized commitizen adapter based on Angular's conventional standard.",
+  "author": {
+    "name": "Bo Lingen",
+    "email": "thecitycide@gmail.com",
+    "url": "github.com/citycide"
   },
-  "homepage": "https://github.com/commitizen/cz-conventional-changelog",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/commitizen/cz-conventional-changelog.git"
+    "url": "git+https://github.com/citycide/cz-conventional.git"
   },
-  "author": "Jim Cummins <jimthedev@gmail.com>",
-  "license": "MIT",
+  "homepage": "https://github.com/citycide/cz-conventional",
+  "bugs": "https://github.com/citycide/cz-conventional/issues",
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "commit",
+    "commitizen",
+    "git",
+    "conventional",
+    "angular",
+    "standard",
+    "cli",
+    "utility"
+  ],
+  "files": [
+    "index.js",
+    "questions.js"
+  ],
+  "scripts": {
+    "build": "babel src -d . -x .lsc",
+    "commit": "git-cz",
+    "test": "echo 'No tests.'",
+    "prepublish": "npm run build"
+  },
   "dependencies": {
-    "conventional-commit-types": "^2.0.0",
-    "lodash.map": "^4.5.1",
-    "longest": "^1.0.1",
-    "pad-right": "^0.2.2",
-    "right-pad": "^1.0.1",
-    "word-wrap": "^1.0.3"
+    "conventional-commit-types": "^2.1.0",
+    "word-wrap": "^1.2.1"
   },
   "devDependencies": {
-    "commitizen": "2.9.5",
-    "semantic-release": "^6.3.2"
+    "babel-cli": "^6.24.0",
+    "babel-plugin-lightscript": "^0.5.0",
+    "babel-plugin-partial-application": "^1.0.0",
+    "babel-preset-env": "^1.2.2",
+    "commitizen": "^2.9.6"
   },
-  "czConfig": {
-    "path": "./"
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": 4
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "lightscript",
+      "partial-application"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./index.js"
+    }
   }
 }
